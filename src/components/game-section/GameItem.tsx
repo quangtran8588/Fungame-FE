@@ -1,15 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { HStack, Text, useDisclosure } from "@chakra-ui/react";
+import { HStack, Text } from "@chakra-ui/react";
 
-import GuessModal from "../../modals/GuessModal";
-import { GameItemInfo } from "./GameSection";
+import { GameItemInfo } from "../body/GameSection";
 
 interface Props {
   info: GameItemInfo;
 }
 
 export default function GameItem({ info }: Props) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const startTime = new Date(info.startTime * 1000);
   const startHours = startTime.getHours().toString().padStart(2, "0");
   const startMinutes = startTime.getMinutes().toString().padStart(2, "0");
@@ -29,7 +27,6 @@ export default function GameItem({ info }: Props) {
         borderStyle="double"
         alignItems="center"
         justifyContent="space-between"
-        onClick={onOpen}
       >
         <HStack ml="3" fontSize={{ base: "xs", sm: "sm" }}>
           <Text color="#fff">Game Id: </Text>
@@ -43,12 +40,6 @@ export default function GameItem({ info }: Props) {
           {`${startHours}:${startMinutes} - ${endHours}:${endMinutes}`}
         </Text>
       </HStack>
-      <GuessModal
-        isOpen={isOpen}
-        onClose={onClose}
-        gameId={info.gameId}
-        isDisabled={info.isActive && info.isConnectedWallet ? false : true}
-      />
     </>
   );
 }

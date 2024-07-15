@@ -1,5 +1,5 @@
-import { HStack, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { HStack, Text } from "@chakra-ui/react";
 import { readContract } from "thirdweb";
 import { ethers } from "ethers";
 
@@ -8,7 +8,7 @@ import {
   getGameResult,
   queryCurrentGameId,
   Request,
-} from "../../types";
+} from "../../../types";
 
 export default function LastPrice() {
   const [lastPrice, setLastPrice] = useState<bigint>(BigInt(0));

@@ -44,8 +44,6 @@ export interface GameSetting {
   lockoutTime: number;
 }
 
-export const methodClaim = "function claim()";
-
 export const getStartTimeMethod =
   "function START_TIME() external view returns (uint256)";
 
@@ -63,6 +61,17 @@ export const getSettingsMethod =
 
 export const getGameResult =
   "function games(uint256) external view returns (uint256, uint256)";
+
+export const getWinningStatus =
+  "function checkWinning(address,uint256) external view returns (bool)";
+
+//  daily claim `points` - Points contract
+export const sendDailyClaim = "function claim()";
+
+//  claim winning game - Fun Game contract
+export const sendClaim = "function claim(uint256)";
+
+export const sendGuess = "function guess(uint256,uint256,uint8)";
 
 export const queryStartTime: Request = {
   contract: fungameContract,

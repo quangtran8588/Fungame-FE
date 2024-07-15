@@ -1,5 +1,6 @@
 import { Box, Flex } from "@chakra-ui/react";
-import ConnectWalletButton from "./ConnectWalletButton";
+
+import ConnectWalletButton from "./navbar/ConnectWalletButton";
 
 export default function Navbar() {
   return (

@@ -1,18 +1,16 @@
-import { useState, useEffect } from "react";
-import { HStack, Text } from "@chakra-ui/react";
+import { useEffect } from "react";
 import { readContract } from "thirdweb";
-import { isEqual } from "lodash";
+import { HStack, Text } from "@chakra-ui/react";
 
-import { getPointsMethod, pointsContract, Request } from "../../types";
-import { useAppContext } from "../hooks/useAppContext";
+import { getPointsMethod, pointsContract, Request } from "../../../types";
+import { useAppContext } from "../../hooks/useAppContext";
 
-export default function PointBalance() {
-  const { wallet } = useAppContext();
-  const [points, setPoints] = useState<number>(0);
+export default function Points() {
+  const { wallet, points, onSetPoints } = useAppContext();
 
   useEffect(() => {
     if (!wallet) {
-      setPoints(0);
+      onSetPoints(0);
       return;
     }
 
@@ -24,7 +22,7 @@ export default function PointBalance() {
       };
 
       const result = Number(await readContract(request));
-      setPoints(result);
+      onSetPoints(result);
     };
 
     fetchPoints();
@@ -38,7 +36,7 @@ export default function PointBalance() {
     <HStack w="100%" h="100%" alignItems="baseline" justifyContent="flex-start">
       <Text fontSize={{ base: "xs" }}>Current Points:</Text>
       <Text fontSize={{ base: "md" }} color="#3498db">
-        {points !== null ? `${points.toString()}` : 0}
+        {points}
       </Text>
     </HStack>
   );

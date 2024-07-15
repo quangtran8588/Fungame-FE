@@ -1,6 +1,7 @@
 import { Box, Container } from "@chakra-ui/react";
-import Header from "./Header";
-import Content from "./Content";
+
+import Header from "./mainboard/Header";
+import Body from "./mainboard/Body";
 
 export default function Mainboard() {
   return (
@@ -30,7 +31,7 @@ export default function Mainboard() {
       </Box>
 
       <Box mt="50px">
-        <Content />
+        <Body />
       </Box>
     </Container>
   );

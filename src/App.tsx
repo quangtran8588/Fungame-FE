@@ -2,19 +2,22 @@ import { useState } from "react";
 import { ThirdwebProvider } from "thirdweb/react";
 import { Wallet } from "thirdweb/wallets";
 
-import { Context } from "./hooks/useAppContext";
-import Navbar from "./components/navbar/Navbar";
-import Mainboard from "./components/mainboard/Mainboard";
-import { ChakraProvider } from "@chakra-ui/react";
-
-import theme from "./utils/theme";
+import Navbar from "./components/Navbar";
+import Mainboard from "./components/Mainboard";
+import { AppContext, Context } from "./hooks/useAppContext";
 
 export default function App() {
   const [wallet, setWallet] = useState<Wallet | undefined>(undefined);
+  const [points, setPoints] = useState<number>(0);
+  const [trials, setTrials] = useState<number>(0);
 
-  const context = {
+  const context: AppContext = {
     wallet: wallet,
+    points: points,
+    trials: trials,
     onSetWallet: setWallet,
+    onSetPoints: setPoints,
+    onSetTrials: setTrials,
   };
 
   return (

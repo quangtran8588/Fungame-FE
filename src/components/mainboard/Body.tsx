@@ -5,26 +5,20 @@ import {
   HStack,
   VStack,
   Text,
+  Button,
+  useDisclosure,
 } from "@chakra-ui/react";
 
-import { methodClaim, pointsContract } from "../../../types";
-import PointBalance from "../PointBalance";
-import TransactionBtn from "../TransactionBtn";
-import GuessTrials from "../GuessTrials";
-import GameSection from "../game-section/GameSection";
+import Points from "../body/Points";
+import TodayTrials from "../body/TodayTrials";
+import GameSection from "../body/GameSection";
+import SubmitModal from "../../modals/SubmitModal";
+import ClaimSubmissionForm from "../body/ClaimSubmissionForm";
 import { useAppContext } from "../../hooks/useAppContext";
 
-const btnStyles = {
-  width: "70px",
-  fontSize: "xs",
-  color: "#809fff",
-  background: "transparent",
-  borderRadius: "10px",
-  border: "2px solid #809fff",
-};
-
-export default function Content() {
+export default function Body() {
   const { wallet } = useAppContext();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
       <Box
@@ -41,30 +35,35 @@ export default function Content() {
           my={2}
         >
           <Box ml={3}>
-            <PointBalance />
+            <Points />
           </Box>
 
-          <Box mr={5}>
-            <TransactionBtn
-              btnName={"Claim"}
-              request={{
-                contract: pointsContract,
-                method: methodClaim,
-                params: [],
-              }}
-              isDisabled={wallet ? false : true}
-              styles={btnStyles}
-            />
-          </Box>
+          <Button
+            width={{ base: "60px" }}
+            height={{ base: "30px" }}
+            fontSize={{ base: "xs" }}
+            mr={3}
+            background="#809fff"
+            color="#000"
+            onClick={onOpen}
+            isDisabled={!wallet ? true : false}
+          >
+            Claim
+          </Button>
+          <SubmitModal isOpen={isOpen} onClose={onClose}>
+            <ClaimSubmissionForm />
+          </SubmitModal>
         </HStack>
+
         <Divider my={1} width="95%" mx="2%" />
+
         <Box ml={3} mb={2}>
-          <GuessTrials />
+          <TodayTrials />
         </Box>
       </Box>
 
       <Container
-        h="180px"
+        h="300px"
         bgGradient="linear-gradient(to top, #1a1a1a, #2e3a46)"
         borderRadius="10px"
         border="1px solid #4d4d4d"

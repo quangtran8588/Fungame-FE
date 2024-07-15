@@ -1,26 +1,24 @@
 import { HStack, Text } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { readContract } from "thirdweb";
 
-import { useAppContext } from "../hooks/useAppContext";
 import {
   fungameContract,
   getGuessTrialsMethod,
   queryStartTime,
   Request,
-} from "../../types";
-import { isEqual } from "lodash";
-import { readContract } from "thirdweb";
+} from "../../../types";
+import { useAppContext } from "../../hooks/useAppContext";
 
 const dayInSeconds = 86400;
 
-export default function GuessTrials() {
-  const { wallet } = useAppContext();
-  const [trials, setTrials] = useState<number>(0);
+export default function TodayTrials() {
+  const { wallet, trials, onSetTrials } = useAppContext();
   const startTime = useRef<number>(0); //  START_TIME immutable in the contract (timestamp)
 
   useEffect(() => {
     if (!wallet) {
-      setTrials(0);
+      onSetTrials(0);
       return;
     }
 
@@ -47,7 +45,7 @@ export default function GuessTrials() {
         params: [wallet.getAccount()?.address, currentDay],
       };
       const numOfTrials = Number(await readContract(queryGuessTrials));
-      setTrials(numOfTrials);
+      onSetTrials(numOfTrials);
     };
 
     fetchTrials();
@@ -60,9 +58,9 @@ export default function GuessTrials() {
 
   return (
     <HStack>
-      <Text fontSize={{ base: "xs" }}>Today guess trial:</Text>
+      <Text fontSize={{ base: "xs" }}>Today guess trials:</Text>
       <Text fontSize={{ base: "md" }} color="#3498db">
-        0
+        {trials}
       </Text>
     </HStack>
   );
