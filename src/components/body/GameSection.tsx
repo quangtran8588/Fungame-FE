@@ -117,7 +117,9 @@ export default function GameSection() {
 
       <SubmitModal isOpen={isOpen} onClose={onClose}>
         <TrialSubmissionForm
-          gameIds={gameItems.map((gameItem) => gameItem.gameId)}
+          gameIds={gameItems
+            .filter((gameItem) => gameItem.isActive)
+            .map((gameItem) => gameItem.gameId)}
           trialsPerDay={gameInfo.current.gameSettings[0]}
         />
       </SubmitModal>

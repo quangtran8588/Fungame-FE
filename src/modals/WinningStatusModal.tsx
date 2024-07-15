@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
-import { readContract } from "thirdweb/transaction";
 import {
   Center,
   Text,
@@ -16,42 +14,31 @@ import {
 } from "@chakra-ui/react";
 import { RiEmotionHappyFill, RiEmotionUnhappyFill } from "react-icons/ri";
 
-import { fungameContract, getWinningStatus, Request } from "../../types";
-import { useAppContext } from "../hooks/useAppContext";
-
 interface Props {
   isOpen: boolean;
+  isWinning: boolean;
   onClose: () => void;
-  gameId: number;
+  clearWinning: () => void;
 }
 
 const ChakraHappyEmotionIcon = chakra(RiEmotionHappyFill);
 const ChakraUnhappyEmotionIcon = chakra(RiEmotionUnhappyFill);
 
-export default function WinningStatusModal({ isOpen, onClose, gameId }: Props) {
-  const [isWinning, setIsWinning] = useState<boolean>(false);
-  const { wallet } = useAppContext();
+export default function WinningStatusModal({
+  isOpen,
+  isWinning,
+  onClose,
+  clearWinning,
+}: Props) {
+  const handleOnClose = () => {
+    clearWinning();
+    onClose();
+  };
 
-  useEffect(() => {
-    if (!wallet || gameId === 0) return;
-    const checkWinning = async () => {
-      const request: Request = {
-        contract: fungameContract,
-        method: getWinningStatus,
-        params: [wallet?.getAccount()?.address, gameId],
-      };
-
-      const result = (await readContract(request)) as unknown as boolean;
-      setIsWinning(result);
-    };
-
-    checkWinning();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleOnClose}
       colorScheme="blackAlpha"
       isCentered={true}
       size={{ base: "xs", md: "sm", xl: "md" }}
@@ -65,15 +52,15 @@ export default function WinningStatusModal({ isOpen, onClose, gameId }: Props) {
         <ModalCloseButton size={{ base: "sm" }} color="gray.500" />
         <ModalBody color="gray.700">
           <VStack justifyContent="center" gap={5}>
-            <Text color={isWinning ? "#FFD700" : "#808080"}>
+            <Text color={isWinning ? "#ff8c00" : "#9370DB"}>
               {isWinning
-                ? "Congratulations! You made a correct guess!"
-                : "Sorry! Try again next time!"}
+                ? "Congratulations! You're a winner!"
+                : "Sorry! You're not a winner!"}
             </Text>
 
             <Box>
               {isWinning ? (
-                <ChakraHappyEmotionIcon color="green" width="50px" />
+                <ChakraHappyEmotionIcon color="#32CD32 " size="50px" />
               ) : (
                 <ChakraUnhappyEmotionIcon color="#9370DB" size="45px" />
               )}

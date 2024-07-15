@@ -18,10 +18,14 @@ import WinningStatusModal from "../../modals/WinningStatusModal";
 import TransactionBtn from "../TransactionBtn";
 import {
   fungameContract,
+  getWinningStatus,
   pointsContract,
+  Request,
   sendClaim,
   sendDailyClaim,
 } from "../../../types";
+import { readContract } from "thirdweb/transaction";
+import { useAppContext } from "../../hooks/useAppContext";
 
 const btnStyles = {
   width: "70px",
@@ -36,7 +40,9 @@ export default function ClaimSubmissionForm() {
   const [claimOption, setClaimOption] = useState<string>("daily");
   const [gameId, setGameId] = useState<string>("0");
   const [error, setError] = useState<string>("");
+  const [isWinning, setIsWinning] = useState<boolean>(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { wallet } = useAppContext();
 
   const handleOnSelect = (option: string) => setClaimOption(option);
 
@@ -48,6 +54,20 @@ export default function ClaimSubmissionForm() {
       setError("Invalid number");
     setGameId(inputValue);
   };
+
+  const handleOnCheck = async () => {
+    const request: Request = {
+      contract: fungameContract,
+      method: getWinningStatus,
+      params: [wallet?.getAccount()?.address, gameId],
+    };
+
+    const result = (await readContract(request)) as unknown as boolean;
+    setIsWinning(result);
+    onOpen();
+  };
+
+  const clearWinning = () => setIsWinning(false);
 
   return (
     <Box>
@@ -95,15 +115,16 @@ export default function ClaimSubmissionForm() {
             fontSize={{ base: "xs" }}
             background="#809fff"
             color="#000"
-            onClick={onOpen}
+            onClick={handleOnCheck}
             isDisabled={claimOption === "daily" || error ? true : false}
           >
             Check
           </Button>
           <WinningStatusModal
             isOpen={isOpen}
+            isWinning={isWinning}
             onClose={onClose}
-            gameId={Number(gameId)}
+            clearWinning={clearWinning}
           />
         </HStack>
 
