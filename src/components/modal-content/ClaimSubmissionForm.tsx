@@ -13,8 +13,9 @@ import {
   Stack,
   useDisclosure,
 } from "@chakra-ui/react";
+import { readContract } from "thirdweb/transaction";
+import { ethers } from "ethers";
 
-import WinningStatusModal from "../../modals/WinningStatusModal";
 import TransactionBtn from "../TransactionBtn";
 import {
   fungameContract,
@@ -24,8 +25,10 @@ import {
   sendClaim,
   sendDailyClaim,
 } from "../../../types";
-import { readContract } from "thirdweb/transaction";
+import ModalWrapper from "../../modals/ModalWrapper";
+import WinningStatus from "./WinningStatus";
 import { useAppContext } from "../../hooks/useAppContext";
+import { isBigNumber } from "../../utils/checkInput";
 
 const btnStyles = {
   width: "70px",
@@ -50,8 +53,9 @@ export default function ClaimSubmissionForm() {
     setError("");
     const inputValue = event.target.value;
 
-    if (isNaN(Number(inputValue)) || inputValue === "")
+    if (!isBigNumber(inputValue) || inputValue === "")
       setError("Invalid number");
+    else if (BigInt(inputValue) > ethers.MaxUint256) setError("Number too big");
     setGameId(inputValue);
   };
 
@@ -67,10 +71,13 @@ export default function ClaimSubmissionForm() {
     onOpen();
   };
 
-  const clearWinning = () => setIsWinning(false);
+  const handleOnClose = () => {
+    setIsWinning(false);
+    onClose();
+  };
 
   return (
-    <Box>
+    <Box color="gray.700">
       <FormControl id="claim-option" mb={5}>
         <Center>
           <RadioGroup onChange={handleOnSelect} value={claimOption}>
@@ -120,12 +127,27 @@ export default function ClaimSubmissionForm() {
           >
             Check
           </Button>
-          <WinningStatusModal
+          <ModalWrapper
+            isOpen={isOpen}
+            onClose={handleOnClose}
+            header={{
+              title: "Fun Game",
+              color: "#000",
+              fontSize: { base: "sm" },
+            }}
+            closeBtn={{
+              size: { base: "sm" },
+              color: "gray.500",
+            }}
+          >
+            <WinningStatus isWinning={isWinning} />
+          </ModalWrapper>
+          {/* <WinningStatusModal
             isOpen={isOpen}
             isWinning={isWinning}
             onClose={onClose}
             clearWinning={clearWinning}
-          />
+          /> */}
         </HStack>
 
         <Center mt={5}>

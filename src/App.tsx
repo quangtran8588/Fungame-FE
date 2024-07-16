@@ -8,8 +8,8 @@ import { AppContext, Context } from "./hooks/useAppContext";
 
 export default function App() {
   const [wallet, setWallet] = useState<Wallet | undefined>(undefined);
-  const [points, setPoints] = useState<number>(0);
-  const [trials, setTrials] = useState<number>(0);
+  const [points, setPoints] = useState<bigint>(BigInt(0));
+  const [trials, setTrials] = useState<bigint>(BigInt(0));
 
   const context: AppContext = {
     wallet: wallet,

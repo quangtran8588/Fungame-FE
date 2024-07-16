@@ -11,8 +11,9 @@ import { VscError } from "react-icons/vsc";
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { Spinner } from "@chakra-ui/react";
 
+import ModalWrapper from "../modals/ModalWrapper";
+import TxStatus from "./modal-content/TxStatus";
 import { Request } from "../../types";
-import TxStatusModal from "../modals/TxStatusModal";
 
 const ChakraErrorIcon = chakra(VscError);
 
@@ -29,10 +30,10 @@ export default function TransactionBtn({
   styles,
   isDisabled,
 }: Props) {
-  const [error, setError] = useState<Error | undefined>();
   const [txHash, setTxHash] = useState<string>("");
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [action, setAction] = useState<string>("");
+  const [error, setError] = useState<Error | undefined>();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleTxConfirmed = (receipt: TransactionReceipt) => {
     setAction("confirmed");
@@ -50,10 +51,11 @@ export default function TransactionBtn({
     onOpen();
   };
 
-  const reset = () => {
+  const handleOnClose = () => {
     setError(undefined);
     setTxHash("");
     setAction("");
+    onClose();
   };
 
   return (
@@ -86,7 +88,39 @@ export default function TransactionBtn({
           {btnName}
         </Box>
       </TransactionButton>
-      <TxStatusModal
+      <ModalWrapper
+        isOpen={isOpen}
+        onClose={handleOnClose}
+        header={{
+          title:
+            action === "pending"
+              ? "Waiting for confirmation"
+              : action === "confirmed"
+              ? "Transaction completed"
+              : "Something went wrong",
+          color: "#000",
+          fontSize: { base: "xs", md: "sm" },
+        }}
+        closeBtn={{
+          size: { base: "sm" },
+          color: "gray.500",
+        }}
+      >
+        <TxStatus
+          Icon={
+            action === "pending" ? (
+              <Spinner size={{ base: "md" }} />
+            ) : action === "confirmed" ? (
+              <CheckCircleIcon color="green.500" boxSize={{ base: 6 }} />
+            ) : (
+              <ChakraErrorIcon color="red.500" boxSize={{ base: 8, md: 10 }} />
+            )
+          }
+          txHash={txHash}
+          errorString={error?.message}
+        />
+      </ModalWrapper>
+      {/* <TxStatusModal
         isOpen={isOpen}
         onClose={onClose}
         reset={reset}
@@ -102,7 +136,7 @@ export default function TransactionBtn({
         }
         txHash={txHash}
         errorString={error?.message}
-      />
+      /> */}
     </>
   );
 }

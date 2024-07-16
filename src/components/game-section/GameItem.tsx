@@ -8,11 +8,11 @@ interface Props {
 }
 
 export default function GameItem({ info }: Props) {
-  const startTime = new Date(info.startTime * 1000);
+  const startTime = new Date(Number(info.startTime) * 1000);
   const startHours = startTime.getHours().toString().padStart(2, "0");
   const startMinutes = startTime.getMinutes().toString().padStart(2, "0");
 
-  const endTime = new Date(info.endTime * 1000);
+  const endTime = new Date(Number(info.endTime) * 1000);
   const endHours = endTime.getHours().toString().padStart(2, "0");
   const endMinutes = endTime.getMinutes().toString().padStart(2, "0");
 
@@ -30,7 +30,7 @@ export default function GameItem({ info }: Props) {
       >
         <HStack ml="3" fontSize={{ base: "xs", sm: "sm" }}>
           <Text color="#fff">Game Id: </Text>
-          <Text color="#FFFF00">{info.gameId}</Text>
+          <Text color="#FFFF00">{info.gameId.toString()}</Text>
         </HStack>
         <Text
           mr="3"

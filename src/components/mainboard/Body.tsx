@@ -12,13 +12,14 @@ import {
 import Points from "../body/Points";
 import TodayTrials from "../body/TodayTrials";
 import GameSection from "../body/GameSection";
-import SubmitModal from "../../modals/SubmitModal";
-import ClaimSubmissionForm from "../body/ClaimSubmissionForm";
+import ModalWrapper from "../../modals/ModalWrapper";
+import ClaimSubmissionForm from "../modal-content/ClaimSubmissionForm";
 import { useAppContext } from "../../hooks/useAppContext";
 
 export default function Body() {
-  const { wallet } = useAppContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { wallet } = useAppContext();
+
   return (
     <>
       <Box
@@ -50,9 +51,21 @@ export default function Body() {
           >
             Claim
           </Button>
-          <SubmitModal isOpen={isOpen} onClose={onClose}>
+          <ModalWrapper
+            isOpen={isOpen}
+            onClose={onClose}
+            header={{
+              title: "Fun Game",
+              color: "#000",
+              fontSize: { base: "sm" },
+            }}
+            closeBtn={{
+              size: { base: "sm" },
+              color: "gray.500",
+            }}
+          >
             <ClaimSubmissionForm />
-          </SubmitModal>
+          </ModalWrapper>
         </HStack>
 
         <Divider my={1} width="95%" mx="2%" />

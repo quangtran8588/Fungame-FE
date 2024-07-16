@@ -10,7 +10,7 @@ export default function Points() {
 
   useEffect(() => {
     if (!wallet) {
-      onSetPoints(0);
+      onSetPoints(BigInt(0));
       return;
     }
 
@@ -21,7 +21,7 @@ export default function Points() {
         params: [wallet.getAccount()?.address],
       };
 
-      const result = Number(await readContract(request));
+      const result = BigInt((await readContract(request)).toString());
       onSetPoints(result);
     };
 
@@ -36,7 +36,7 @@ export default function Points() {
     <HStack w="100%" h="100%" alignItems="baseline" justifyContent="flex-start">
       <Text fontSize={{ base: "xs" }}>Current Points:</Text>
       <Text fontSize={{ base: "md" }} color="#3498db">
-        {points}
+        {points.toString()}
       </Text>
     </HStack>
   );

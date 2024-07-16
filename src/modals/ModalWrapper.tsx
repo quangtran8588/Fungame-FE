@@ -12,10 +12,24 @@ import {
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  header: {
+    title: string;
+    color: string;
+    fontSize: any;
+  };
+  closeBtn: {
+    size: any;
+    color: string;
+  };
   children: React.ReactNode;
 }
 
-export default function SubmitModal({ isOpen, onClose, children }: Props) {
+export default function ModalWrapper({
+  isOpen,
+  onClose,
+  header,
+  children,
+}: Props) {
   return (
     <Modal
       isOpen={isOpen}
@@ -27,11 +41,11 @@ export default function SubmitModal({ isOpen, onClose, children }: Props) {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader color="#000" fontSize={{ base: "sm" }}>
-          <Center>Fun Game</Center>
+        <ModalHeader color="#000" fontSize={{ base: "xs", md: "sm" }}>
+          <Center>{header.title}</Center>
         </ModalHeader>
-        <ModalCloseButton size={{ base: "sm" }} color="gray.500" />
-        <ModalBody color="gray.700">{children}</ModalBody>
+        <ModalCloseButton size="sm" color="gray.500" />
+        <ModalBody>{children}</ModalBody>
       </ModalContent>
     </Modal>
   );

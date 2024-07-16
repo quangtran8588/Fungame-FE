@@ -3,7 +3,8 @@ import { BsInfoCircleFill } from "react-icons/bs";
 
 import MarketPrice from "../header/MarketPrice";
 import LastPrice from "../header/LastPrice";
-import GameInfoModal from "../../modals/GameInfoModal";
+import ModalWrapper from "../../modals/ModalWrapper";
+import GameInfo from "../modal-content/GameInfo";
 
 const ChakraInfoIcon = chakra(BsInfoCircleFill, {
   baseStyle: {
@@ -31,7 +32,21 @@ export default function Header() {
 
       <MarketPrice />
       <LastPrice />
-      <GameInfoModal isOpen={isOpen} onClose={onClose} />
+      <ModalWrapper
+        isOpen={isOpen}
+        onClose={onClose}
+        header={{
+          title: "Fun Game",
+          color: "#fff",
+          fontSize: { base: "sm", md: "md" },
+        }}
+        closeBtn={{
+          size: { base: "sm" },
+          color: "gray.300",
+        }}
+      >
+        <GameInfo />
+      </ModalWrapper>
     </VStack>
   );
 }

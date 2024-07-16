@@ -14,6 +14,7 @@ import {
 import TransactionBtn from "../TransactionBtn";
 import { fungameContract, sendGuess } from "../../../types";
 import { useAppContext } from "../../hooks/useAppContext";
+import { isBigNumber } from "../../utils/checkInput";
 
 const btnUpStyles = {
   width: "70px",
@@ -36,13 +37,13 @@ const btnDownStyles = {
 };
 
 interface Props {
-  gameIds: number[];
-  trialsPerDay: number;
+  gameIds: bigint[];
+  trialsPerDay: bigint;
 }
 
 export default function TrialSubmissionForm({ gameIds, trialsPerDay }: Props) {
   const [value, setValue] = useState<string>("0");
-  const [gameId, setGameId] = useState<number>(0);
+  const [gameId, setGameId] = useState<bigint>(BigInt(0));
   const [error, setError] = useState<string>("");
   const { points, trials } = useAppContext();
 
@@ -52,7 +53,7 @@ export default function TrialSubmissionForm({ gameIds, trialsPerDay }: Props) {
   const isDisabled = gameIds.length === 0;
 
   const handleOnSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedGameId = Number(event.target.value);
+    const selectedGameId = BigInt(event.target.value);
     setGameId(selectedGameId);
   };
 
@@ -60,11 +61,11 @@ export default function TrialSubmissionForm({ gameIds, trialsPerDay }: Props) {
     setError("");
     const inputValue = event.target.value;
 
-    if (isNaN(Number(inputValue)) || inputValue === "")
+    if (!isBigNumber(inputValue) || inputValue === "")
       setError("Invalid number");
     else {
-      if (Number(inputValue) > points) setError("Insufficient points");
-      else if (trials === trialsPerDay && Number(inputValue) === 0)
+      if (BigInt(inputValue) > points) setError("Insufficient points");
+      else if (trials === trialsPerDay && BigInt(inputValue) === BigInt(0))
         setError("Free trials limit reached! Please raise extra.");
     }
 
@@ -72,7 +73,7 @@ export default function TrialSubmissionForm({ gameIds, trialsPerDay }: Props) {
   };
 
   return (
-    <Box>
+    <Box color="gray.700">
       <FormControl id="select-game" mb={1}>
         <HStack alignItems="baseline" justifyContent="space-between">
           <FormLabel htmlFor="select-game" fontSize={{ base: "xs", md: "sm" }}>
@@ -80,7 +81,7 @@ export default function TrialSubmissionForm({ gameIds, trialsPerDay }: Props) {
           </FormLabel>
           <Select
             id="select-game"
-            value={gameId}
+            value={gameId.toString()}
             onChange={handleOnSelect}
             placeholder="Select your game"
             width={{ base: "170px", md: "180px" }}
@@ -90,9 +91,9 @@ export default function TrialSubmissionForm({ gameIds, trialsPerDay }: Props) {
           >
             {gameIds.map((gameId) => (
               <option
-                value={gameId}
+                value={gameId.toString()}
                 key={gameId}
-              >{`GameID = ${gameId}`}</option>
+              >{`GameID = ${gameId.toString()}`}</option>
             ))}
           </Select>
         </HStack>
@@ -129,7 +130,7 @@ export default function TrialSubmissionForm({ gameIds, trialsPerDay }: Props) {
             params: [gameId, value, 1],
           }}
           styles={btnUpStyles}
-          isDisabled={gameId === 0 ? true : false}
+          isDisabled={gameId === BigInt(0) ? true : false}
         />
 
         <TransactionBtn
@@ -140,7 +141,7 @@ export default function TrialSubmissionForm({ gameIds, trialsPerDay }: Props) {
             params: [gameId, value, 2],
           }}
           styles={btnDownStyles}
-          isDisabled={gameId === 0 ? true : false}
+          isDisabled={gameId === BigInt(0) ? true : false}
         />
       </HStack>
     </Box>

@@ -18,7 +18,7 @@ export default function TodayTrials() {
 
   useEffect(() => {
     if (!wallet) {
-      onSetTrials(0);
+      onSetTrials(BigInt(0));
       return;
     }
 
@@ -44,7 +44,9 @@ export default function TodayTrials() {
         method: getGuessTrialsMethod,
         params: [wallet.getAccount()?.address, currentDay],
       };
-      const numOfTrials = Number(await readContract(queryGuessTrials));
+      const numOfTrials = BigInt(
+        (await readContract(queryGuessTrials)).toString()
+      );
       onSetTrials(numOfTrials);
     };
 
@@ -60,7 +62,7 @@ export default function TodayTrials() {
     <HStack>
       <Text fontSize={{ base: "xs" }}>Today guess trials:</Text>
       <Text fontSize={{ base: "md" }} color="#3498db">
-        {trials}
+        {trials.toString()}
       </Text>
     </HStack>
   );

@@ -11,8 +11,8 @@ import {
 } from "@chakra-ui/react";
 import { isEqual } from "lodash";
 
-import SubmitModal from "../../modals/SubmitModal";
-import TrialSubmissionForm from "../game-section/TrialSubmissionForm";
+import TrialSubmissionForm from "../modal-content/TrialSubmissionForm";
+import ModalWrapper from "../../modals/ModalWrapper";
 import GameItem from "../game-section/GameItem";
 import {
   queryCurrentGameId,
@@ -22,34 +22,36 @@ import {
 import { useAppContext } from "../../hooks/useAppContext";
 
 export interface GameItemInfo {
-  gameId: number;
-  startTime: number;
-  endTime: number;
+  gameId: bigint;
+  startTime: bigint;
+  endTime: bigint;
   isActive: boolean;
 }
 
 interface GameInfo {
-  gameId: number;
-  startTime: number;
-  gameSettings: number[];
+  gameId: bigint;
+  startTime: bigint;
+  gameSettings: bigint[];
 }
 
 export default function GameSection() {
   const [counter, setCounter] = useState<number>(0);
-  const { wallet } = useAppContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { wallet } = useAppContext();
   const gameInfo = useRef<GameInfo>({
-    gameId: 0,
-    startTime: 0,
-    gameSettings: [0, 0, 0, 0],
+    gameId: BigInt(0),
+    startTime: BigInt(0),
+    gameSettings: [BigInt(0), BigInt(0), BigInt(0), BigInt(0)],
   });
   counter;
 
   useEffect(() => {
     const fetchGame = async () => {
-      const startTime = Number(await readContract(queryStartTime));
+      const startTime = BigInt((await readContract(queryStartTime)).toString());
       const settings = (await readContract(querySettings)) as any[];
-      const currentGameId = Number(await readContract(queryCurrentGameId));
+      const currentGameId = BigInt(
+        (await readContract(queryCurrentGameId)).toString()
+      );
 
       const newInfo: GameInfo = {
         gameId: currentGameId,
@@ -72,18 +74,19 @@ export default function GameSection() {
 
   const currentTime = Math.floor(Date.now() / 1000);
   const gameItems = [...Array(3).keys()].map((idx) => {
-    const currentGameId: number = gameInfo.current.gameId;
-    const startTime: number = gameInfo.current.startTime;
-    const windowTime: number = Number(gameInfo.current.gameSettings[2]);
-    const lockoutTime: number = Number(gameInfo.current.gameSettings[3]);
+    const currentGameId: bigint = gameInfo.current.gameId;
+    const startTime: bigint = gameInfo.current.startTime;
+    const windowTime: bigint = gameInfo.current.gameSettings[2];
+    const lockoutTime: bigint = gameInfo.current.gameSettings[3];
 
-    const gameStartTime: number =
-      startTime + (currentGameId - 1 + idx) * windowTime;
-    const gameEndTime: number = startTime + (currentGameId + idx) * windowTime;
+    const gameStartTime: bigint =
+      startTime + (currentGameId - BigInt(1) + BigInt(idx)) * windowTime;
+    const gameEndTime: bigint =
+      startTime + (currentGameId + BigInt(idx)) * windowTime;
     const isActive: boolean = currentTime <= gameEndTime - lockoutTime;
 
     const gameItem: GameItemInfo = {
-      gameId: currentGameId + idx,
+      gameId: currentGameId + BigInt(idx),
       startTime: gameStartTime,
       endTime: gameEndTime,
       isActive: isActive,
@@ -115,14 +118,26 @@ export default function GameSection() {
         </Button>
       </Center>
 
-      <SubmitModal isOpen={isOpen} onClose={onClose}>
+      <ModalWrapper
+        isOpen={isOpen}
+        onClose={onClose}
+        header={{
+          title: "Fun Game",
+          color: "#000",
+          fontSize: { base: "sm" },
+        }}
+        closeBtn={{
+          size: { base: "sm" },
+          color: "gray.500",
+        }}
+      >
         <TrialSubmissionForm
           gameIds={gameItems
             .filter((gameItem) => gameItem.isActive)
             .map((gameItem) => gameItem.gameId)}
           trialsPerDay={gameInfo.current.gameSettings[0]}
         />
-      </SubmitModal>
+      </ModalWrapper>
     </Box>
   );
 }
