@@ -15,7 +15,7 @@ function exitError(error) {
     .get(`https://api.telegram.org/bot${accessToken}/getMe`)
     .catch(exitError);
   const botUsername = getBot.data.result.username;
-  const url = "";
+  const url = "https://fungame-fe.vercel.app/";
 
   console.log(`\nSetting bot ${botUsername} webapp url to ${url}`);
   const resp = await axios
